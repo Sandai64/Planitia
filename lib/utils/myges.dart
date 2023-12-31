@@ -1,5 +1,8 @@
+import 'dart:developer';
+
 import 'package:dio/dio.dart';
 import 'package:reskolae/utils/logging.dart';
+import 'package:reskolae/utils/str.dart';
 
 /// Reverse-engineered MyGES auth methods & other nice utilities.
 /// Thanks to tchenu aka TC.
@@ -7,41 +10,31 @@ import 'package:reskolae/utils/logging.dart';
 class MyGES
 {
   // Class members
-  static const _oauthAuthorizeUrl = 'https://authentication.kordis.fr/oauth/authorize?client_id={clientID}&response_type=token';
-  final Dio _dioClient = Dio();
+  static const _oauthAuthorizeUrl = 'https://authentication.kordis.fr/oauth/authorize?client_id=skolae-app&response_type=token';
 
   // Constructors
   MyGES();
 
   // Helper methods
-  // String? _extractAccessToken() { return '!impl'; }
-
-  Future<String?> authenticate(
-    {
-      required String clientID,
-      required String username,
-      required String password,
-    }
-  ) async
+  Future<dynamic> authenticate(String username, String password) async
   {
-    final authEndpoint = _oauthAuthorizeUrl.replaceAll('{clientID}', clientID);
+    final Dio dioClient = Dio();
+    dioClient.options.headers['Authorization'] = 'Basic ${Strutils.base64encode('$username:$password')}';
 
-    Logging.log(this, 'clientID=$clientID | user=$username | password=$password');
+    // Spoof ReSkolae as regular skolae app
+    // -- For some boneheaded reason these guys thought it'd be a good idea to hide the authentication token
+    // inside the response header. Response, which points to their own retarded protocol (comreseaugesskolae:/oauth2redirect#access_token=...)
+    // Use standards you fucks. Spent three days debugging your shit.
+    final result = await dioClient.get(_oauthAuthorizeUrl, options: Options(
+      followRedirects: false,
+      validateStatus: (status) { return status! < 500; }
+    ));
 
-    final response = await _dioClient.get(authEndpoint, data: { 'auth': [username, password], 'allow_redirects': false, 'http_errors': false });
+    final location = result.headers.value('Location')!.split('&');
 
-    if ( response.statusCode == 401 )
-    {
-      Logging.log(this, 'user authentication: 401 Unauthorized.');
-      throw Exception('401 Unauthorized');
-    }
+    final access_token = location[0].split('=')[1];
+    final expires_in   = int.parse(location[2].split('=')[1]);
 
-    if (!response.data.access_token)
-    {
-      Logging.log(this, 'user authentication: access token couldn\'t be found.');
-      throw Exception('No access token data');
-    }
-
-    return response.data.access_token;
+    inspect([access_token, expires_in]);
   }
 }
