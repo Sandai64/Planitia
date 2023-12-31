@@ -76,7 +76,7 @@ class _LoginScreenState extends State<LoginScreen>
                           try
                           {
                             Logging.log(this, _formKey.currentState?.value);
-                            result = await myges.authenticate(clientID: 'test', username: _formKey.currentState?.value['username'], password: _formKey.currentState?.value['password']);
+                            result = await myges.authenticate(_formKey.currentState?.value['username'], _formKey.currentState?.value['password']);
                           }
                           catch (e)
                           {
