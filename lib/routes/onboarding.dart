@@ -1,61 +1,44 @@
 
 import 'package:flutter/material.dart';
-import 'package:flutter_onboarding_slider/flutter_onboarding_slider.dart';
 import 'package:go_router/go_router.dart';
-import 'package:lucide_icons/lucide_icons.dart';
+import 'package:introduction_screen/introduction_screen.dart';
 
 class OnBoardingScreen extends StatelessWidget
 {
   const OnBoardingScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return OnBoardingSlider(
-      onFinish: () => { context.go('/login') },
-      headerBackgroundColor: Theme.of(context).colorScheme.background,
-      finishButtonText: 'Login with MyGES',
-      finishButtonStyle: FinishButtonStyle(
-        backgroundColor: Colors.black,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24))
-      ),
-      skipTextButton: const Text('Skip'),
-      background: const [
-        SizedBox.shrink(),
-        SizedBox.shrink(),
-      ],
-      totalPage: 2,
-      speed: 1,
-      pageBodies: [
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 40),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children : [
-                  const Icon(LucideIcons.graduationCap, size: 32),
-                  const SizedBox(width: 8),
-                  Text('ReSkolae', style: Theme.of(context).textTheme.headlineLarge),
-                ]
-              ),
-              const SizedBox(height: 32),
-              const Text('A better alternative to Skolae.')
-            ],
+  Widget build(BuildContext context)
+  {
+    return Scaffold(
+      body: IntroductionScreen(
+        done: const Text('Login with MyGES'),
+        next: const Text('Next'),
+        onDone: () => { context.go('/login') },
+        pages: [
+          PageViewModel(
+            decoration: const PageDecoration(
+              bodyAlignment: Alignment.center
+            ),
+            titleWidget: Text('planitia', style: TextStyle(fontFamily: 'colorbasic', fontSize: Theme.of(context).textTheme.displayLarge?.fontSize)),
+            body: 'An easier way into the MyGES network.'
           ),
-        ),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 40),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Text('Simple & Efficient', style: Theme.of(context).textTheme.headlineLarge),
-              const SizedBox(height: 32),
-              const Text('Because your time is valuable. You deserve better from the ESGI.', textAlign: TextAlign.center)
-            ],
+          PageViewModel(
+            decoration: const PageDecoration(
+              bodyAlignment: Alignment.center
+            ),
+            titleWidget: Text('SIMPLE', style: TextStyle(fontFamily: 'EDD', fontSize: Theme.of(context).textTheme.displayMedium?.fontSize)),
+            body: 'Guaranteed to be easy. See your grades & upcoming classes with a simple UI.'
           ),
-        ),
-      ],
+          PageViewModel(
+            decoration: const PageDecoration(
+              bodyAlignment: Alignment.center
+            ),
+            titleWidget: Text('STABLE', style: TextStyle(fontFamily: 'EDD', fontSize: Theme.of(context).textTheme.displayMedium?.fontSize)),
+            body: 'Tested and well-designed. Not something the MyGES devs really thought about.'
+          ),
+        ],
+      )
     );
   }
 }
