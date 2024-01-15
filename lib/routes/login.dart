@@ -32,7 +32,7 @@ class _LoginScreenState extends State<LoginScreen>
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Text('Login with MyGES', style: Theme.of(context).textTheme.headlineLarge),
+              Text('LOGIN WITH MYGES', textAlign: TextAlign.center, style: TextStyle(fontFamily: 'EDD', fontSize: Theme.of(context).textTheme.displaySmall?.fontSize)),
               const SizedBox(height: 24),
               FormBuilder(
                 key: _formKey,
